@@ -171,7 +171,14 @@ const Dashboard = () => {
       right: 20,
       zIndex: 1000
     }}>
-      <button onClick={onScan}>Scan</button>
+      <button onClick={onScan} style={{
+        border: 'none',
+        background: 'green',
+        color: 'white',
+        padding: 20,
+        borderRadius: 10,
+        fontWeight: 'bold'
+      }}>Check in participant</button>
     </div>
       <WidgetsDropdown stats={stats} />
 
