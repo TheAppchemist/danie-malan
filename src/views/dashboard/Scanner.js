@@ -80,6 +80,21 @@ const Scanner = ({
                 height: '100%'
             }}></div>}
 
+            {uid && !user && (
+                <div style={{
+                    position: 'absolute',
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    bottom: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}>
+                    <div className="lds-dual-ring"></div>
+                </div>
+            )}
+
             {uid && (
                 <div style={{
                     position: 'absolute',

@@ -57,6 +57,7 @@ import ParticipantsService from 'src/services/participants'
 import { useNavigate } from 'react-router-dom'
 import { getAuth } from 'firebase/auth'
 import Scanner from './Scanner'
+import { getDoc } from 'firebase/firestore'
 
 const Dashboard = () => {
   const random = (min, max) => Math.floor(Math.random() * (max - min + 1) + min)
@@ -111,46 +112,57 @@ const Dashboard = () => {
 
     auth.onAuthStateChanged(state => {
       if (state) {
-        setLoggedIn(true)
+        ParticipantsService.isAdmin(state.uid).then(isAdmin => {
+          if (isAdmin) {
+            setLoggedIn(true)
+          } else {
+            navigate('/login')
+          }
+        })
+        
       } else {
         navigate('/login')
       }
     })
   }, [])
 
+  const getUsers = () => {
+    ParticipantsService.participants().then(allUsers => {
+      setUsers(allUsers)
+      const userStats = {
+        kzn: {
+          registered: 0,
+          checkedIn: 0
+        },
+        gauteng: {
+          registered: 0,
+          checkedIn: 0
+        },
+        limpopo: {
+          registered: 0,
+          checkedIn: 0
+        },
+        'northern-cape': {
+          registered: 0,
+          checkedIn: 0
+        }
+      }
+
+      for (let user of allUsers) {
+        userStats[user.location].registered += 1
+
+        if (user.checkedIn) {
+          userStats[user.location].checkedIn += 1
+        }
+      }
+
+      setStats(userStats)
+    })
+  }
+
   useEffect(() => {
     if (loggedIn) {
-      ParticipantsService.participants().then(allUsers => {
-        setUsers(allUsers)
-        const userStats = {
-          kzn: {
-            registered: 0,
-            checkedIn: 0
-          },
-          gauteng: {
-            registered: 0,
-            checkedIn: 0
-          },
-          limpopo: {
-            registered: 0,
-            checkedIn: 0
-          },
-          'northern-cape': {
-            registered: 0,
-            checkedIn: 0
-          }
-        }
-  
-        for (let user of allUsers) {
-          userStats[user.location].registered += 1
-  
-          if (user.checkedIn) {
-            userStats[user.location].checkedIn += 1
-          }
-        }
-  
-        setStats(userStats)
-      })
+      getUsers()
     }
   }, [loggedIn])
 
@@ -160,9 +172,11 @@ const Dashboard = () => {
 
   const onStopScan = () => {
     setScan(false)
+
+    getUsers()
   }
 
-  return (
+  return loggedIn ? (
     <>
     {scan && <Scanner onCancelScanning={onStopScan} />}
     <div style={{
@@ -221,7 +235,16 @@ const Dashboard = () => {
         </CCol>
       </CRow>
     </>
-  )
+  ) : <div style={{
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  }}>Loading..</div>
 }
 
 export default Dashboard

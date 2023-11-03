@@ -28,7 +28,7 @@ const Login = () => {
     const auth = getAuth()
     setError(undefined)
 
-    signInWithEmailAndPassword(auth, email, password).then(() => {
+    signInWithEmailAndPassword(auth, email.trim(), password).then(() => {
       navigate('/dashboard')
     }).catch(err => {
       setError(err.message)

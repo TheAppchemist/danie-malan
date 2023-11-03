@@ -2,6 +2,13 @@ import { initializeApp } from "firebase/app";
 import { collection, doc, getDoc, getDocs, getFirestore, updateDoc } from "firebase/firestore";
 
 const ParticipantsService = {
+    isAdmin: (id) => {
+        const db = getFirestore()
+
+        return getDoc(doc(db, `admin/${id}`)).then(snapshot => {
+            return snapshot.exists()
+        })
+    },
     participants: () => {
         const db = getFirestore()
 
