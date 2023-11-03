@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import {
   CAvatar,
@@ -53,6 +53,10 @@ import avatar6 from 'src/assets/images/avatars/6.jpg'
 
 import WidgetsBrand from '../widgets/WidgetsBrand'
 import WidgetsDropdown from '../widgets/WidgetsDropdown'
+import ParticipantsService from 'src/services/participants'
+import { useNavigate } from 'react-router-dom'
+import { getAuth } from 'firebase/auth'
+import Scanner from './Scanner'
 
 const Dashboard = () => {
   const random = (min, max) => Math.floor(Math.random() * (max - min + 1) + min)
@@ -96,9 +100,80 @@ const Dashboard = () => {
     },
   ]
 
+  const [users, setUsers] = useState()
+  const [stats, setStats] = useState()
+  const [loggedIn, setLoggedIn] = useState()
+  const [scan, setScan] = useState(false)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const auth = getAuth()
+
+    auth.onAuthStateChanged(state => {
+      if (state) {
+        setLoggedIn(true)
+      } else {
+        navigate('/login')
+      }
+    })
+  }, [])
+
+  useEffect(() => {
+    if (loggedIn) {
+      ParticipantsService.participants().then(allUsers => {
+        setUsers(allUsers)
+        const userStats = {
+          kzn: {
+            registered: 0,
+            checkedIn: 0
+          },
+          gauteng: {
+            registered: 0,
+            checkedIn: 0
+          },
+          limpopo: {
+            registered: 0,
+            checkedIn: 0
+          },
+          'northern-cape': {
+            registered: 0,
+            checkedIn: 0
+          }
+        }
+  
+        for (let user of allUsers) {
+          userStats[user.location].registered += 1
+  
+          if (user.checkedIn) {
+            userStats[user.location].checkedIn += 1
+          }
+        }
+  
+        setStats(userStats)
+      })
+    }
+  }, [loggedIn])
+
+  const onScan = () => {
+    setScan(true)
+  }
+
+  const onStopScan = () => {
+    setScan(false)
+  }
+
   return (
     <>
-      <WidgetsDropdown />
+    {scan && <Scanner onCancelScanning={onStopScan} />}
+    <div style={{
+      position: 'fixed',
+      bottom: 20,
+      right: 20,
+      zIndex: 1000
+    }}>
+      <button onClick={onScan}>Scan</button>
+    </div>
+      <WidgetsDropdown stats={stats} />
 
       <CRow>
         <CCol xs>
@@ -114,7 +189,7 @@ const Dashboard = () => {
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                  {tableExample.map((item, index) => (
+                  {users?.map((item, index) => (
                     <CTableRow v-for="item in tableItems" key={index}>
                       <CTableDataCell>
                         <div>{item.name}</div>

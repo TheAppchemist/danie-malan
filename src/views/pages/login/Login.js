@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 import {
   CButton,
@@ -21,11 +21,19 @@ const Login = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState()
+  const navigate = useNavigate()
 
   const onLogin = () => {
     const auth = getAuth()
+    setError(undefined)
 
-    signInWithEmailAndPassword(auth, email, password)
+    signInWithEmailAndPassword(auth, email, password).then(() => {
+      navigate('/dashboard')
+    }).catch(err => {
+      setError(err.message)
+      console.log(err);
+    })
   }
 
   return (
@@ -39,6 +47,9 @@ const Login = () => {
                   <CForm>
                     <h1>Login</h1>
                     <p className="text-medium-emphasis">Sign In to your account</p>
+                    {error && <p style={{
+                      color: 'red'
+                    }}>{error}</p>}
                     <CInputGroup className="mb-3">
                       <CInputGroupText>
                         <CIcon icon={cilUser} />

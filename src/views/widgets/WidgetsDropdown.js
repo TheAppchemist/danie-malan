@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 import React from 'react'
 import {
   CRow,
@@ -13,7 +15,7 @@ import { CChartBar, CChartLine } from '@coreui/react-chartjs'
 import CIcon from '@coreui/icons-react'
 import { cilArrowBottom, cilArrowTop, cilOptions } from '@coreui/icons'
 
-const WidgetsDropdown = () => {
+const WidgetsDropdown = ({ stats }) => {
   return (
     <CRow>
       <CCol sm={6} lg={3}>
@@ -25,24 +27,11 @@ const WidgetsDropdown = () => {
           }}
           value={
             <>
-              40
-              <span className="fs-6 fw-normal"> (0)</span>
+              {stats ? stats.gauteng.registered : '-'}
+              <span className="fs-6 fw-normal">{stats ? ' (' + stats.gauteng.checkedIn + ')' : ' -'}</span>
             </>
           }
           title="Gauteng"
-          action={
-            <CDropdown alignment="end">
-              <CDropdownToggle color="transparent" caret={false} className="p-0">
-                <CIcon icon={cilOptions} className="text-high-emphasis-inverse" />
-              </CDropdownToggle>
-              <CDropdownMenu>
-                <CDropdownItem>Action</CDropdownItem>
-                <CDropdownItem>Another action</CDropdownItem>
-                <CDropdownItem>Something else here...</CDropdownItem>
-                <CDropdownItem disabled>Disabled action</CDropdownItem>
-              </CDropdownMenu>
-            </CDropdown>
-          }
         />
       </CCol>
       <CCol sm={6} lg={3}>
@@ -54,8 +43,8 @@ const WidgetsDropdown = () => {
           }}
           value={
             <>
-              40
-              <span className="fs-6 fw-normal"> (0)</span>
+              {stats ? stats.kzn.registered : '-'}
+              <span className="fs-6 fw-normal">{stats ? ' (' + stats.kzn.checkedIn + ')' : ' -'}</span>
             </>
           }
           title="KZN"
@@ -70,8 +59,8 @@ const WidgetsDropdown = () => {
           }}
           value={
             <>
-              40
-              <span className="fs-6 fw-normal"> (0)</span>
+              {stats ? stats.limpopo.registered : '-'}
+              <span className="fs-6 fw-normal">{stats ? ' (' + stats.limpopo.checkedIn + ')' : ' -'}</span>
             </>
           }
           title="Limpopo"
@@ -86,8 +75,8 @@ const WidgetsDropdown = () => {
           }}
           value={
             <>
-              40
-              <span className="fs-6 fw-normal"> (0)</span>
+              {stats ? stats['northern-cape'].registered : '-'}
+              <span className="fs-6 fw-normal">{stats ? ' (' + stats['northern-cape'].checkedIn + ')' : ' -'}</span>
             </>
           }
           title="Northern Cape"

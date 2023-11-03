@@ -18,8 +18,8 @@ import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 const _nav = [
   {
     component: CNavItem,
-    name: 'Learners',
-    to: '/learners',
+    name: 'Dashboard',
+    to: '/dashboard',
   },
   // {
   //   component: CNavItem,
